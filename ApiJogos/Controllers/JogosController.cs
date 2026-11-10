@@ -1,7 +1,6 @@
-﻿using ApiJogos.Model;
-using Microsoft.AspNetCore.Http;
+using ApiJogos.Data;
+using ApiJogos.Model;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections;
 
 namespace ApiJogos.Controllers
 {
@@ -9,29 +8,26 @@ namespace ApiJogos.Controllers
     [ApiController]
     public class JogosController : ControllerBase
     {
+        // Antes os jogos ficavam numa List estática (sumiam ao reiniciar a API).
+        // Agora eles ficam salvos no banco jogos.db.
+        private readonly AppDbContext _context;
 
-
-        private static readonly List<Jogo> _jogos =
-
-            [
-                new Jogo{Id = 1, Titulo = "GTA VII RIO DE JANEIRO", Genero = "Ação", Plataforma = "Console/Pc", AnoLancamento = 2013, Zerado = true},
-                new Jogo{Id = 2, Titulo = "ISTRET FIGUITER", Genero = "Luta", Plataforma = "Arcade", AnoLancamento = 1998, Zerado = false},
-                new Jogo{Id = 3, Titulo = "MONKEY SIMULATOR", Genero = "RPG", Plataforma = "PC", AnoLancamento = 2013, Zerado = true},
-            ];
-
-        private static int _proximoId = 4;
+        // O ASP.NET entrega o AppDbContext aqui automaticamente (injeção de dependência)
+        public JogosController(AppDbContext context)
+        {
+            _context = context;
+        }
 
         [HttpGet]
         public ActionResult<IEnumerable<Jogo>> GetJogos()
         {
-            return Ok(_jogos);
+            return Ok(_context.Jogos.ToList());
         }
 
-        [HttpGet("Id")]
-
+        [HttpGet("{id}")]
         public ActionResult<Jogo> GetJogo(int id)
         {
-            var jogo = _jogos.FirstOrDefault(x => x.Id == id);
+            var jogo = _context.Jogos.FirstOrDefault(x => x.Id == id);
 
             if (jogo == null)
             {
@@ -41,15 +37,15 @@ namespace ApiJogos.Controllers
         }
 
         [HttpPost]
-
         public ActionResult<Jogo> PostJogo(Jogo jogo)
         {
-            jogo.Id = _proximoId;
+            // O Id é gerado pelo banco, não precisamos mais do _proximoId
+            jogo.Id = 0;
 
-            _jogos.Add(jogo);
+            _context.Jogos.Add(jogo);
+            _context.SaveChanges();
 
-            return CreatedAtAction(nameof(GetJogo), new { id = jogo.Id });
-
+            return CreatedAtAction(nameof(GetJogo), new { id = jogo.Id }, jogo);
         }
     }
 }

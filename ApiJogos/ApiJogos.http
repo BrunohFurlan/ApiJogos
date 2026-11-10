@@ -1,6 +1,24 @@
 @ApiJogos_HostAddress = http://localhost:5036
 
-GET {{ApiJogos_HostAddress}}/weatherforecast/
+GET {{ApiJogos_HostAddress}}/api/jogos
 Accept: application/json
+
+###
+
+GET {{ApiJogos_HostAddress}}/api/jogos/1
+Accept: application/json
+
+###
+
+POST {{ApiJogos_HostAddress}}/api/jogos
+Content-Type: application/json
+
+{
+  "titulo": "Novo Jogo",
+  "genero": "Aventura",
+  "plataforma": "PC",
+  "anoLancamento": 2024,
+  "zerado": false
+}
 
 ###
