@@ -9,7 +9,7 @@ namespace ApiJogos.Controllers
     public class JogosController : ControllerBase
     {
         // Antes os jogos ficavam numa List estática (sumiam ao reiniciar a API).
-        // Agora eles ficam salvos no banco jogos.db.
+        // Agora eles ficam salvos no banco ApiJogosDb (SQL Server).
         private readonly AppDbContext _context;
 
         // O ASP.NET entrega o AppDbContext aqui automaticamente (injeção de dependência)

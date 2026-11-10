@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ApiJogos.Data
 {
     // Classe que representa o banco de dados.
-    // Cada DbSet vira uma tabela no arquivo jogos.db.
+    // Cada DbSet vira uma tabela no banco ApiJogosDb (SQL Server).
     public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)

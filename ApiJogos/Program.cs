@@ -13,15 +13,15 @@ namespace ApiJogos
 
             builder.Services.AddControllers();
 
-            // Banco de dados SQLite: a connection string fica no appsettings.json
+            // Banco de dados SQL Server: a connection string fica no appsettings.json
             builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlite(builder.Configuration.GetConnectionString("Default")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
             var app = builder.Build();
 
-            // Cria o arquivo jogos.db (e as tabelas) se ele ainda não existir
+            // Cria o banco ApiJogosDb (e a tabela Jogos) no SQL Server se ainda não existir
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
