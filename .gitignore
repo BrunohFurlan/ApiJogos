@@ -49,3 +49,8 @@ bld/
 **/Properties/serviceDependencies.local.json
 **/Properties/serviceDependencies.local.json.user
 
+
+# Banco SQLite local
+*.db
+*.db-shm
+*.db-wal
