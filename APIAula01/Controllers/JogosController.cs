@@ -1,40 +1,36 @@
+using APIAula01.Data;
 using APIAula01.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIAula01.Controllers;
 
 /// <summary>
-/// Versão 1: os dados ficam em uma lista na memória (sem banco de dados).
-/// Tudo o que for cadastrado se perde quando a aplicação é reiniciada.
+/// Versão 2: os dados ficam num banco de dados, acessado pelo Entity Framework Core.
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
 public class JogosController : ControllerBase
 {
-    // "static" porque o ASP.NET cria um novo controller a cada requisição.
-    // Sem o static, a lista seria recriada (e esvaziada) toda vez.
-    private static readonly List<Jogo> _jogos =
-    [
-        new Jogo { Id = 1, Titulo = "The Legend of Zelda: Tears of the Kingdom", Genero = "Aventura", Plataforma = "Nintendo Switch", AnoLancamento = 2023, Zerado = true },
-        new Jogo { Id = 2, Titulo = "Hollow Knight: Silksong", Genero = "Metroidvania", Plataforma = "PC", AnoLancamento = 2025, Zerado = false },
-        new Jogo { Id = 3, Titulo = "EA Sports FC 26", Genero = "Esporte", Plataforma = "PlayStation 5", AnoLancamento = 2025, Zerado = false }
-    ];
+    private readonly AppDbContext _context;
 
-    // Controla o próximo Id (papel que o banco de dados fará na versão 2)
-    private static int _proximoId = 4;
+    // O ASP.NET entrega um AppDbContext novo a cada requisição (Scoped)
+    public JogosController(AppDbContext context)
+    {
+        _context = context;
+    }
 
     // GET: api/Jogos
     [HttpGet]
     public ActionResult<IEnumerable<Jogo>> GetJogos()
     {
-        return Ok(_jogos);
+        return Ok(_context.Jogos.ToList());
     }
 
     // GET: api/Jogos/5
     [HttpGet("{id}")]
     public ActionResult<Jogo> GetJogo(int id)
     {
-        var jogo = _jogos.FirstOrDefault(j => j.Id == id);
+        var jogo = _context.Jogos.Find(id);
 
         if (jogo is null)
         {
@@ -48,8 +44,10 @@ public class JogosController : ControllerBase
     [HttpPost]
     public ActionResult<Jogo> PostJogo(Jogo jogo)
     {
-        jogo.Id = _proximoId++;
-        _jogos.Add(jogo);
+        jogo.Id = 0;                  // quem gera o Id agora é o banco
+
+        _context.Jogos.Add(jogo);     // 1. anota: "isto é para inserir"
+        _context.SaveChanges();       // 2. envia de fato para o banco (INSERT)
 
         // 201 Created + cabeçalho Location apontando para GET api/Jogos/{id}
         return CreatedAtAction(nameof(GetJogo), new { id = jogo.Id }, jogo);
@@ -59,7 +57,7 @@ public class JogosController : ControllerBase
     [HttpPut("{id}")]
     public IActionResult PutJogo(int id, Jogo jogoAtualizado)
     {
-        var jogo = _jogos.FirstOrDefault(j => j.Id == id);
+        var jogo = _context.Jogos.Find(id);
 
         if (jogo is null)
         {
@@ -72,6 +70,8 @@ public class JogosController : ControllerBase
         jogo.AnoLancamento = jogoAtualizado.AnoLancamento;
         jogo.Zerado = jogoAtualizado.Zerado;
 
+        _context.SaveChanges();       // UPDATE só do que mudou
+
         return NoContent();
     }
 
@@ -79,14 +79,15 @@ public class JogosController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeleteJogo(int id)
     {
-        var jogo = _jogos.FirstOrDefault(j => j.Id == id);
+        var jogo = _context.Jogos.Find(id);
 
         if (jogo is null)
         {
             return NotFound();
         }
 
-        _jogos.Remove(jogo);
+        _context.Jogos.Remove(jogo);
+        _context.SaveChanges();       // DELETE
 
         return NoContent();
     }
