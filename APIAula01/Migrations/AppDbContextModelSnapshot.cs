@@ -43,6 +43,35 @@ namespace APIAula01.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Jogos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AnoLancamento = 2023,
+                            Genero = "Aventura",
+                            Plataforma = "Nintendo Switch",
+                            Titulo = "The Legend of Zelda: Tears of the Kingdom",
+                            Zerado = true
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AnoLancamento = 2025,
+                            Genero = "Metroidvania",
+                            Plataforma = "PC",
+                            Titulo = "Hollow Knight: Silksong",
+                            Zerado = false
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AnoLancamento = 2025,
+                            Genero = "Esporte",
+                            Plataforma = "PlayStation 5",
+                            Titulo = "EA Sports FC 26",
+                            Zerado = false
+                        });
                 });
 #pragma warning restore 612, 618
         }
