@@ -21,4 +21,8 @@ public class Jogo
 
     /// <summary>Indica se o jogo já foi zerado (concluído).</summary>
     public bool Zerado { get; set; }
+
+    /// <summary>Nota de 0 a 10 dada ao jogo. Opcional.</summary>
+    [Range(0, 10, ErrorMessage = "A nota deve estar entre 0 e 10.")]
+    public int? Nota { get; set; }
 }

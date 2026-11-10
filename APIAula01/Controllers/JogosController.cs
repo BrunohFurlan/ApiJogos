@@ -69,6 +69,7 @@ public class JogosController : ControllerBase
         jogo.Plataforma = jogoAtualizado.Plataforma;
         jogo.AnoLancamento = jogoAtualizado.AnoLancamento;
         jogo.Zerado = jogoAtualizado.Zerado;
+        jogo.Nota = jogoAtualizado.Nota;
 
         _context.SaveChanges();       // UPDATE só do que mudou
 

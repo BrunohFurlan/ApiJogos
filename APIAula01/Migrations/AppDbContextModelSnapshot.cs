@@ -29,6 +29,9 @@ namespace APIAula01.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("Nota")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Plataforma")
                         .IsRequired()
                         .HasColumnType("TEXT");

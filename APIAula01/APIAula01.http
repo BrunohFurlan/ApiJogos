@@ -17,7 +17,8 @@ Content-Type: application/json
   "genero": "Sandbox",
   "plataforma": "PC",
   "anoLancamento": 2011,
-  "zerado": false
+  "zerado": false,
+  "nota": 9
 }
 
 ### Atualizar um jogo
@@ -29,7 +30,8 @@ Content-Type: application/json
   "genero": "Metroidvania",
   "plataforma": "PC",
   "anoLancamento": 2025,
-  "zerado": true
+  "zerado": true,
+  "nota": 9
 }
 
 ### Remover um jogo
