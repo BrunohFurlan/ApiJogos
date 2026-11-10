@@ -1,6 +1,7 @@
 using APIAula01.Data;
 using APIAula01.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;   // necessário para o ToListAsync
 
 namespace APIAula01.Controllers;
 
@@ -21,16 +22,16 @@ public class JogosController : ControllerBase
 
     // GET: api/Jogos
     [HttpGet]
-    public ActionResult<IEnumerable<Jogo>> GetJogos()
+    public async Task<ActionResult<IEnumerable<Jogo>>> GetJogos()
     {
-        return Ok(_context.Jogos.ToList());
+        return Ok(await _context.Jogos.ToListAsync());
     }
 
     // GET: api/Jogos/5
     [HttpGet("{id}")]
-    public ActionResult<Jogo> GetJogo(int id)
+    public async Task<ActionResult<Jogo>> GetJogo(int id)
     {
-        var jogo = _context.Jogos.Find(id);
+        var jogo = await _context.Jogos.FindAsync(id);
 
         if (jogo is null)
         {
@@ -42,12 +43,12 @@ public class JogosController : ControllerBase
 
     // POST: api/Jogos
     [HttpPost]
-    public ActionResult<Jogo> PostJogo(Jogo jogo)
+    public async Task<ActionResult<Jogo>> PostJogo(Jogo jogo)
     {
-        jogo.Id = 0;                  // quem gera o Id agora é o banco
+        jogo.Id = 0;                  // quem gera o Id é o banco
 
-        _context.Jogos.Add(jogo);     // 1. anota: "isto é para inserir"
-        _context.SaveChanges();       // 2. envia de fato para o banco (INSERT)
+        _context.Jogos.Add(jogo);
+        await _context.SaveChangesAsync();
 
         // 201 Created + cabeçalho Location apontando para GET api/Jogos/{id}
         return CreatedAtAction(nameof(GetJogo), new { id = jogo.Id }, jogo);
@@ -55,9 +56,9 @@ public class JogosController : ControllerBase
 
     // PUT: api/Jogos/5
     [HttpPut("{id}")]
-    public IActionResult PutJogo(int id, Jogo jogoAtualizado)
+    public async Task<IActionResult> PutJogo(int id, Jogo jogoAtualizado)
     {
-        var jogo = _context.Jogos.Find(id);
+        var jogo = await _context.Jogos.FindAsync(id);
 
         if (jogo is null)
         {
@@ -71,16 +72,16 @@ public class JogosController : ControllerBase
         jogo.Zerado = jogoAtualizado.Zerado;
         jogo.Nota = jogoAtualizado.Nota;
 
-        _context.SaveChanges();       // UPDATE só do que mudou
+        await _context.SaveChangesAsync();
 
         return NoContent();
     }
 
     // DELETE: api/Jogos/5
     [HttpDelete("{id}")]
-    public IActionResult DeleteJogo(int id)
+    public async Task<IActionResult> DeleteJogo(int id)
     {
-        var jogo = _context.Jogos.Find(id);
+        var jogo = await _context.Jogos.FindAsync(id);
 
         if (jogo is null)
         {
@@ -88,7 +89,7 @@ public class JogosController : ControllerBase
         }
 
         _context.Jogos.Remove(jogo);
-        _context.SaveChanges();       // DELETE
+        await _context.SaveChangesAsync();
 
         return NoContent();
     }
